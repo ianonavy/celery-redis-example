@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+  celery_redis:
+    image: redis
+  web:
+    build: .
+    command: python -u web.py
+    volumes:
+      - .:/opt/code
+    links:
+      - celery_redis
+  worker:
+    command: celery -A tasks worker --loglevel=info
+    build: .
+    volumes:
+      - .:/opt/code
+    links:
+      - celery_redis
